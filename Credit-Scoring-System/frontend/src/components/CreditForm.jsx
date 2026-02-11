@@ -46,9 +46,10 @@ const CreditForm = ({ onSubmit, isLoading }) => {
         <Title level={5} style={{ color: '#B01E23', marginTop: 0 }}><DollarOutlined /> Thông tin Tài chính</Title>
         <Row gutter={16}>
           <Col span={24}>
-            <Form.Item label="Tổng thu nhập hàng năm (VND)" name="AMT_INCOME_TOTAL" rules={[{ required: true }]}>
+            <Form.Item label="Tổng thu nhập hàng năm (VND)" name="AMT_INCOME_TOTAL" rules={[{ required: true, message: 'Thu nhập tối thiểu là 36 triệu/năm (3 triệu/tháng)' }]}>
               <InputNumber 
-                style={{ width: '100%' }} 
+                style={{ width: '100%' }}
+                min={36000000}
                 formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
                 addonAfter="VND"
@@ -56,18 +57,20 @@ const CreditForm = ({ onSubmit, isLoading }) => {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Số tiền muốn vay" name="AMT_CREDIT" rules={[{ required: true }]}>
+            <Form.Item label="Số tiền muốn vay" name="AMT_CREDIT" rules={[{ required: true, message: 'Số tiền vay phải > 0' }]}>
               <InputNumber 
                 style={{ width: '100%' }}
+                min={1}
                 formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
               />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Khả năng trả/tháng" name="AMT_ANNUITY" rules={[{ required: true }]}>
+            <Form.Item label="Khả năng trả/tháng" name="AMT_ANNUITY" rules={[{ required: true, message: 'Khả năng trả phải > 0' }]}>
               <InputNumber 
                 style={{ width: '100%' }}
+                min={1}
                 formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                 parser={value => value.replace(/\$\s?|(,*)/g, '')}
               />
@@ -96,12 +99,12 @@ const CreditForm = ({ onSubmit, isLoading }) => {
              </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Tuổi" name="age" rules={[{ required: true }]}>
-              <InputNumber style={{ width: '100%' }} min={18} max={70} prefix={<UserOutlined />} />
+            <Form.Item label="Tuổi" name="age" rules={[{ required: true, message: 'Tuổi phải từ 20-60' }]}>
+              <InputNumber style={{ width: '100%' }} min={20} max={60} prefix={<UserOutlined />} />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="Thâm niên (năm)" name="years_employed" rules={[{ required: true }]}>
+            <Form.Item label="Thâm niên (năm)" name="years_employed" rules={[{ required: true, message: 'Thâm niên phải >= 0' }]}>
               <InputNumber style={{ width: '100%' }} min={0} max={50} prefix={<ClockCircleOutlined />} />
             </Form.Item>
           </Col>

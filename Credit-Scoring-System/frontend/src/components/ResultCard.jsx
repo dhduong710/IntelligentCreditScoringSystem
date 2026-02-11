@@ -58,7 +58,7 @@ const ResultCard = ({ data }) => {
                 <Statistic title="Điểm Tín dụng" value={data.credit_score} valueStyle={{ color: scoreColor, fontWeight: 'bold' }} />
             </Col>
             <Col span={12}>
-                <Statistic title="Ngưỡng rủi ro hệ thống" value={`${(data.threshold * 100).toFixed(1)}%`} />
+                <Statistic title="Ngưỡng rủi ro hệ thống" value="15%" />
             </Col>
         </Row>
       </div>
