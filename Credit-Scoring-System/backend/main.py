@@ -6,7 +6,7 @@ import joblib
 import os
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="HUST Bank AI Core", version="2.0")
+app = FastAPI(title="HUST Bank AI Core", version="3.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,132 +16,110 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Sử dụng đường dẫn tuyệt đối dựa trên vị trí của file hiện tại
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_PATH = os.path.join(BASE_DIR, 'model_core', 'lgbm_credit_model_focused.pkl')
-META_PATH = os.path.join(BASE_DIR, 'model_core', 'model_metadata_focused.pkl')
+MODEL_PATH = os.path.join(BASE_DIR, 'model_core', 'lgbm_credit_model_v3.pkl')
+META_PATH = os.path.join(BASE_DIR, 'model_core', 'model_metadata_v3.pkl')
 
-print("Loading Focused Model...")
+print("Loading Model V3...")
 try:
     model = joblib.load(MODEL_PATH)
     metadata = joblib.load(META_PATH)
+    
     EXPECTED_FEATURES = metadata['features']
-    THRESHOLD = metadata['threshold']
-    print(f"Model loaded! Threshold: {THRESHOLD:.4f}")
+    # Threshold từ training là 0.6591, nhưng để an toàn trong thực tế, 
+    # nên dùng mức bảo thủ hơn (ví dụ 0.5) hoặc dùng đúng ngưỡng tối ưu
+    THRESHOLD = metadata.get('threshold', 0.5) 
+    CAT_FEATURES = metadata.get('cat_features', [])
+    
+    print(f"Model V3 Loaded! Threshold: {THRESHOLD:.4f}")
 except Exception as e:
-    print(f"Error: {e}")
+    print(f"❌ Error: {e}")
     THRESHOLD = 0.5
 
-# Cấu hình ngưỡng cứng 
-MIN_INCOME = 3_000_000        # Lương tối thiểu 3 triệu/tháng mới được vay
-MAX_DTI = 0.7                 # Tổng nợ/Thu nhập không quá 70%
-MAX_LOAN_TO_INCOME = 15       # Không vay quá 15 lần thu nhập năm 
-MIN_AGE = 20
-MAX_AGE = 60
-
+# ĐỊNH NGHĨA INPUT MỚI
 class CreditApplication(BaseModel):
+    # Tài chính
     AMT_INCOME_TOTAL: float
     AMT_CREDIT: float
     AMT_ANNUITY: float
-    DAYS_BIRTH: int       # Input là số âm từ UI
-    DAYS_EMPLOYED: int    # Input là số âm từ UI
+    DAYS_BIRTH: int       # Số âm
+    DAYS_EMPLOYED: int    # Số âm
     
-    CODE_GENDER: str = 'M' 
-    EDUCATION: str = 'University'
+    # Hành vi & Lịch sử 
+    NAME_HOUSING_TYPE: str   # House / apartment, Rented apartment...
+    NAME_FAMILY_STATUS: str  # Married, Single...
+    EXT_SOURCE_2: float      # Điểm tín dụng giả lập (0.1 - 0.9)
 
 @app.post("/predict")
 def predict_credit_score(data: CreditApplication):
-    # LAYER 1: KIỂM TRA DỮ LIỆU RÁC
-    if data.AMT_INCOME_TOTAL < MIN_INCOME * 12: # So sánh theo năm
-        return {
-            "status": "REJECT",
-            "probability": 1.0,
-            "credit_score": 300,
-            "message": f"Thu nhập không đủ điều kiện tối thiểu ({MIN_INCOME:,.0f} VND/tháng)."
-        }
-    
-    # LAYER 2: LUẬT CỨNG NGÂN HÀNG
-    # Rule A: Debt-to-Income (DTI) Ratio
-    # Khả năng trả nợ (Annuity) không được chiếm quá 70% thu nhập tháng
-    monthly_income = data.AMT_INCOME_TOTAL / 12
-    dti_ratio = data.AMT_ANNUITY / monthly_income
-    
-    if dti_ratio > MAX_DTI:
-        return {
-            "status": "REJECT",
-            "probability": 0.95,
-            "credit_score": 350,
-            "message": f"Gánh nặng nợ quá cao! Khoản trả hàng tháng chiếm {dti_ratio:.1%} thu nhập (Max: {MAX_DTI:.0%})."
-        }
+    # LAYER 1: HARD RULES 
+    if data.AMT_INCOME_TOTAL < 10_000_000: # Ví dụ chặn dưới 10tr/năm
+        return {"status": "REJECT", "probability": 1.0, "credit_score": 300, "message": "Thu nhập dưới chuẩn tối thiểu."}
+        
+    income_credit_ratio = data.AMT_CREDIT / data.AMT_INCOME_TOTAL
+    if income_credit_ratio > 20:
+        return {"status": "REJECT", "probability": 0.99, "credit_score": 300, "message": f"Khoản vay gấp {income_credit_ratio:.1f} lần thu nhập."}
 
-    # Rule B: Loan-to-Income Ratio
-    # Vay 100 tỷ với lương 1 triệu -> Chặn ngay
-    loan_income_ratio = data.AMT_CREDIT / data.AMT_INCOME_TOTAL
-    if loan_income_ratio > MAX_LOAN_TO_INCOME:
-        return {
-            "status": "REJECT",
-            "probability": 0.99,
-            "credit_score": 320,
-            "message": f"Khoản vay quá lớn ({loan_income_ratio:.1f} lần thu nhập). Giới hạn tối đa: {MAX_LOAN_TO_INCOME} lần."
-        }
-
-    # Rule C: Age Check
-    age = abs(data.DAYS_BIRTH) / 365
-    if age < MIN_AGE or age > MAX_AGE:
-        return {
-            "status": "REJECT",
-            "probability": 0.80,
-            "credit_score": 400,
-            "message": f"Độ tuổi {age:.1f} không nằm trong khung hỗ trợ tín dụng ({MIN_AGE}-{MAX_AGE})."
-        }
-
-    # LAYER 3: AI SCORING 
+    # LAYER 2: AI PREDICTION (V3) 
     try:
-        # Chuẩn bị dữ liệu cho Model 
-        input_data = pd.DataFrame([{
-            'AMT_INCOME_TOTAL': data.AMT_INCOME_TOTAL,
-            'AMT_CREDIT': data.AMT_CREDIT,
-            'AMT_ANNUITY': data.AMT_ANNUITY,
-            'DAYS_BIRTH': data.DAYS_BIRTH,
-            'DAYS_EMPLOYED': data.DAYS_EMPLOYED
-        }])
+        # 1. Tạo DataFrame từ Input
+        # Lưu ý: Gán EXT_SOURCE_3 bằng EXT_SOURCE_2 (giả định 2 nguồn tin giống nhau)
+        input_dict = {
+            'AMT_INCOME_TOTAL': [data.AMT_INCOME_TOTAL],
+            'AMT_CREDIT': [data.AMT_CREDIT],
+            'AMT_ANNUITY': [data.AMT_ANNUITY],
+            'DAYS_BIRTH': [data.DAYS_BIRTH],
+            'DAYS_EMPLOYED': [data.DAYS_EMPLOYED],
+            'NAME_HOUSING_TYPE': [data.NAME_HOUSING_TYPE],
+            'NAME_FAMILY_STATUS': [data.NAME_FAMILY_STATUS],
+            'EXT_SOURCE_2': [data.EXT_SOURCE_2],
+            'EXT_SOURCE_3': [data.EXT_SOURCE_2] 
+        }
+        df = pd.DataFrame(input_dict)
         
-        # Feature Engineering
-        input_data['CREDIT_INCOME_PERCENT'] = input_data['AMT_CREDIT'] / input_data['AMT_INCOME_TOTAL']
-        input_data['ANNUITY_INCOME_PERCENT'] = input_data['AMT_ANNUITY'] / (input_data['AMT_INCOME_TOTAL'] / 12)
-        input_data['CREDIT_TERM'] = input_data['AMT_CREDIT'] / input_data['AMT_ANNUITY']
-        input_data['DAYS_EMPLOYED_PERCENT'] = input_data['DAYS_EMPLOYED'] / input_data['DAYS_BIRTH']
+        # 2. Convert Category
+        for col in CAT_FEATURES:
+            if col in df.columns:
+                df[col] = df[col].astype('category')
+
+        # 3. Feature Engineering 
+        df['CREDIT_INCOME_PERCENT'] = df['AMT_CREDIT'] / df['AMT_INCOME_TOTAL']
+        df['ANNUITY_INCOME_PERCENT'] = df['AMT_ANNUITY'] / (df['AMT_INCOME_TOTAL'] / 12)
+        df['CREDIT_TERM'] = df['AMT_CREDIT'] / df['AMT_ANNUITY']
+        df['DAYS_EMPLOYED_PERCENT'] = df['DAYS_EMPLOYED'] / df['DAYS_BIRTH']
         
-        # Đảm bảo đủ cột
+        # 4. Đảm bảo đủ cột và đúng thứ tự
         for col in EXPECTED_FEATURES:
-            if col not in input_data.columns:
-                input_data[col] = 0
-                
-        # Dự đoán
-        prob_default = model.predict_proba(input_data[EXPECTED_FEATURES])[0][1]
+            if col not in df.columns:
+                df[col] = 0 # Fill cột thiếu nếu có
         
-        # MODEL CALIBRATION (HIỆU CHỈNH)
-        # Vì model hiện tại đang trả về xác suất rất thấp (do mất cân bằng dữ liệu)
-        # Dùng một ngưỡng threshold hợp lý hơn bằng tay thay vì 0.9043 
-        REALISTIC_THRESHOLD = 0.15 # Nếu xác suất vỡ nợ > 15% là coi như Rủi ro cao 
+        df = df[EXPECTED_FEATURES]
         
-        status = "REJECT" if prob_default >= REALISTIC_THRESHOLD else "APPROVE"
+        # 5. Dự đoán
+        prob_default = model.predict_proba(df)[0][1]
         
-        # Tính điểm Score (Mapping 0-15% xác suất sang thang điểm 600-850)
-        # Logic: Xác suất càng thấp điểm càng cao
-        normalized_score = int(850 - (prob_default / REALISTIC_THRESHOLD) * 250)
-        if normalized_score < 300: normalized_score = 300
+        # 6. Kết luận
+        # Nếu xác suất vỡ nợ > Threshold -> Từ chối
+        status = "REJECT" if prob_default >= THRESHOLD else "APPROVE"
         
-        msg = f"Hồ sơ tín dụng tốt. Đủ điều kiện phê duyệt. Xác suất rủi ro: {prob_default:.1%}." if status == "APPROVE" else f"Hồ sơ nằm trong vùng rủi ro cao theo đánh giá AI. Xác suất rủi ro: {prob_default:.1%}."
+        # Mapping Score: 
+        # Xác suất 0.65 (ngưỡng) -> Score 600 (trung bình)
+        # Xác suất 0.1 -> Score 800 (tốt)
+        # Xác suất 0.9 -> Score 300 (tệ)
+        score = int(850 - (prob_default * 500)) 
+        
+        msg = f"Hồ sơ tín dụng Tốt. Rủi ro: {prob_default:.1%}"
+        if status == "REJECT":
+            msg = f"Rủi ro cao ({prob_default:.1%}) do lịch sử tín dụng hoặc yếu tố hành vi."
 
         return {
             "status": status,
             "probability": float(prob_default),
-            "threshold": float(REALISTIC_THRESHOLD),
-            "credit_score": normalized_score,
+            "threshold": float(THRESHOLD),
+            "credit_score": score,
             "message": msg
         }
         
     except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Lỗi xử lý AI")
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail="Lỗi xử lý AI Core")
