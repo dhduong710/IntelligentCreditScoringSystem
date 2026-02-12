@@ -38,7 +38,8 @@ function App() {
         padding: '0 40px',
         boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         height: 72,
-        zIndex: 10
+        zIndex: 10,
+        background: '#C41E3A'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <img 
@@ -47,20 +48,20 @@ function App() {
             style={{ height: 45 }} 
           />
           <div style={{ lineHeight: 1.2 }}>
-            <Title level={4} style={{ margin: 0, color: token.colorPrimary, fontWeight: 800 }}>
+            <Title level={4} style={{ margin: 0, color: '#fff', fontWeight: 800 }}>
               HUSTBANK
             </Title>
-            <Text type="secondary" style={{ fontSize: 12, letterSpacing: 1 }}>Hệ thống chấm điểm tín dụng thông minh</Text>
+            <Text style={{ fontSize: 12, letterSpacing: 1, color: '#fff' }}>Hệ thống chấm điểm tín dụng thông minh</Text>
           </div>
         </div>
         <Space>
-           <Text strong><SafetyCertificateOutlined /> Cổng thông tin an toàn</Text>
+           <Text strong style={{ color: '#fff' }}><SafetyCertificateOutlined /> Cổng thông tin an toàn</Text>
         </Space>
       </Header>
 
       {/* BODY: Split Layout */}
       <Content style={{ padding: '30px 40px' }}>
-        <Row gutter={32} style={{ height: 'calc(100vh - 140px)' }}> {/* Chiều cao full màn hình trừ header/footer */}
+        <Row gutter={32} style={{ height: 'calc(100vh - 140px)' }}> 
           
           {/* CỘT TRÁI: FORM NHẬP LIỆU */}
           <Col span={10} style={{ height: '100%' }}>
