@@ -14,23 +14,6 @@
 
 ---
 
-## Mục lục
-
-- [Giới thiệu](#-giới-thiệu)
-- [Tính năng chính](#-tính-năng-chính)
-- [Công nghệ sử dụng](#-công-nghệ-sử-dụng)
-- [Kiến trúc hệ thống](#-kiến-trúc-hệ-thống)
-- [Cài đặt](#-cài-đặt)
-- [Hướng dẫn sử dụng](#-hướng-dẫn-sử-dụng)
-- [API Documentation](#-api-documentation)
-- [Model Performance](#-model-performance)
-- [Demo](#-demo)
-- [Roadmap](#-roadmap)
-- [Đóng góp](#-đóng-góp)
-- [License](#-license)
-
----
-
 ## Giới thiệu
 
 **HUSTBANK Intelligent Credit Scoring System** là một hệ thống toàn diện để đánh giá rủi ro tín dụng khách hàng vay vốn, kết hợp:
