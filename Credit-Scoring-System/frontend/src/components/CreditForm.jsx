@@ -32,8 +32,8 @@ const CreditForm = ({ onSubmit, isLoading }) => {
 
   return (
     <Card 
-      style={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 12, border: 'none', boxShadow: 'none' }}
-      bodyStyle={{ flex: 1, padding: '0 10px' }}
+      style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', borderRadius: 12, border: 'none', boxShadow: 'none' }}
+      bodyStyle={{ flex: 1, padding: '0 clamp(8px, 2vw, 10px)' }}
     >
       <div style={{ marginBottom: 24 }}>
         <Title level={3} style={{ margin: 0, color: '#1f1f1f' }}>Hồ sơ vay vốn</Title>
@@ -46,14 +46,14 @@ const CreditForm = ({ onSubmit, isLoading }) => {
         onValuesChange={calculateTerm} 
         size="large"
         initialValues={{
-          AMT_INCOME_TOTAL: 50000000, 
-          AMT_CREDIT: 1000000000,
-          AMT_ANNUITY: 25000000,
-          age: 30,
-          years_employed: 5,
-          NAME_HOUSING_TYPE: "House / apartment",
-          NAME_FAMILY_STATUS: "Married",
-          EXT_SOURCE_2: 0.85
+          AMT_INCOME_TOTAL: 120000000, 
+          AMT_CREDIT: 360000000,
+          AMT_ANNUITY: 3600000,
+          age: 36,
+          years_employed: 1,
+          NAME_HOUSING_TYPE: "Rented apartment",
+          NAME_FAMILY_STATUS: "Single / not married",
+          EXT_SOURCE_2: 0.1
         }}
       >
         <Title level={5} style={{ color: '#B01E23' }}><DollarOutlined /> Tài chính</Title>
@@ -69,8 +69,8 @@ const CreditForm = ({ onSubmit, isLoading }) => {
           />
         )}
 
-        <Row gutter={16}>
-          <Col span={24}>
+        <Row gutter={[16, 8]}>
+          <Col xs={24} sm={24}>
             <Form.Item label="Tổng thu nhập (năm)" name="AMT_INCOME_TOTAL" rules={[{ required: true }]}>
                <InputNumber 
                  style={{ width: '100%' }} 
@@ -81,7 +81,7 @@ const CreditForm = ({ onSubmit, isLoading }) => {
                />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Số tiền muốn vay" name="AMT_CREDIT" rules={[{ required: true }]}>
                <InputNumber 
                  style={{ width: '100%' }} 
@@ -91,7 +91,7 @@ const CreditForm = ({ onSubmit, isLoading }) => {
                />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
              <Form.Item label="Khả năng trả/tháng" name="AMT_ANNUITY" rules={[{ required: true }]}>
                <InputNumber 
                  style={{ width: '100%' }} 
@@ -106,18 +106,18 @@ const CreditForm = ({ onSubmit, isLoading }) => {
         <Divider style={{ margin: '12px 0' }} />
 
         <Title level={5} style={{ color: '#B01E23' }}><SolutionOutlined /> Nhân khẩu & Hành vi</Title>
-        <Row gutter={16}>
-          <Col span={12}>
+        <Row gutter={[16, 8]}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Tuổi" name="age" rules={[{ required: true }]}>
               <InputNumber style={{ width: '100%' }} min={18} max={70} prefix={<UserOutlined />} />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Thâm niên (năm)" name="years_employed">
               <InputNumber style={{ width: '100%' }} min={0} max={40} prefix={<ClockCircleOutlined />} />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Nhà ở" name="NAME_HOUSING_TYPE">
               <Select>
                 <Option value="House / apartment">Nhà riêng</Option>
@@ -127,7 +127,7 @@ const CreditForm = ({ onSubmit, isLoading }) => {
               </Select>
             </Form.Item>
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Gia đình" name="NAME_FAMILY_STATUS">
               <Select>
                  <Option value="Married">Đã kết hôn</Option>

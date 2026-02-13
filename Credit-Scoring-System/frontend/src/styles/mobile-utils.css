@@ -1,0 +1,26 @@
+/* Additional mobile-specific styles */
+.mobile-hide {
+  display: inline;
+}
+
+@media (max-width: 576px) {
+  .mobile-hide {
+    display: none !important;
+  }
+}
+
+@media (min-width: 577px) {
+  .mobile-show {
+    display: none !important;
+  }
+}
+
+.mobile-show {
+  display: none;
+}
+
+@media (max-width: 576px) {
+  .mobile-show {
+    display: inline !important;
+  }
+}
