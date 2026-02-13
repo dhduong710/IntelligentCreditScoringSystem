@@ -32,52 +32,67 @@ const ResultCard = ({ data }) => {
   };
 
   return (
-    <div style={{ padding: '0 clamp(8px, 2vw, 20px)', textAlign: 'center' }}>
-      <Tag color={isApproved ? "success" : "error"} style={{ padding: '5px 15px', fontSize: 14, marginBottom: 20 }}>
+    <div style={{ padding: '0 20px', textAlign: 'center' }}>
+      <Tag color={isApproved ? "success" : "error"} style={{ padding: '5px 15px', fontSize: 'clamp(12px, 3vw, 14px)', marginBottom: 20 }}>
          {isApproved ? "HỒ SƠ AN TOÀN" : "HỒ SƠ RỦI RO CAO"}
       </Tag>
 
-      <Title level={2} style={{ color: scoreColor, margin: '10px 0' }}>
+      <Title level={2} style={{ color: scoreColor, margin: '10px 0', fontSize: 'clamp(18px, 5vw, 28px)' }}>
          {isApproved ? <CheckCircleFilled /> : <CloseCircleFilled />} {isApproved ? "HỒ SƠ ĐƯỢC DUYỆT" : "TỪ CHỐI KHOẢN VAY"}
       </Title>
       
-      <Text style={{ fontSize: 16 }}>{data.message}</Text>
+      <Text style={{ fontSize: 'clamp(14px, 3vw, 16px)', display: 'block' }}>{data.message}</Text>
 
       <Row justify="center" align="middle" style={{ marginTop: 30, marginBottom: 20 }}>
-         <Col span={24} style={{ height: 'clamp(150px, 30vw, 200px)' }}>
+         <Col span={24} style={{ height: 'clamp(180px, 40vw, 200px)' }}>
              <Gauge {...config} />
-             <Text type="secondary" strong></Text>
          </Col>
       </Row>
 
       {/* PHẦN HIỂN THỊ LÝ DO TỪ SHAP */}
-      <div style={{ textAlign: 'left', marginTop: 20, marginBottom: 20 }}>
-        <Alert
-          message={<span style={{ fontWeight: 'bold' }}> Yếu tố ảnh hưởng chính</span>}
-          description={
-            <List
-              size="small"
-              dataSource={data.reasons || []}
-              renderItem={(item) => (
-                <List.Item style={{ padding: '4px 0', border: 'none' }}>
-                  <Text>• {item}</Text>
-                </List.Item>
-              )}
-            />
-          }
-          type={isApproved ? "error" : "error"}
-          showIcon={false}
-          style={{ borderRadius: 8 }}
-        />
-      </div>
+      {data.reasons && data.reasons.length > 0 && (
+        <div style={{ textAlign: 'left', marginTop: 20, marginBottom: 20 }}>
+          <Alert
+            message={
+              <span style={{ fontWeight: 'bold', fontSize: 'clamp(13px, 3vw, 15px)' }}>
+                 Yếu tố ảnh hưởng chính
+              </span>
+            }
+            description={
+              <List
+                size="small"
+                dataSource={data.reasons}
+                renderItem={(item) => (
+                  <List.Item style={{ padding: '4px 0', border: 'none' }}>
+                    <Text style={{ fontSize: 'clamp(12px, 2.8vw, 14px)' }}>• {item}</Text>
+                  </List.Item>
+                )}
+              />
+            }
+            type="error"
+            showIcon={false}
+            style={{ borderRadius: 8 }}
+          />
+        </div>
+      )}
 
-      <div style={{ background: '#f9f9f9', padding: 'clamp(12px, 3vw, 20px)', borderRadius: 8, marginTop: 20 }}>
-        <Row gutter={16}>
+      <div style={{ background: '#f9f9f9', padding: 'clamp(12px, 4vw, 20px)', borderRadius: 8, marginTop: 20 }}>
+        <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
-                <Statistic title="Điểm Tín dụng" value={data.credit_score} valueStyle={{ color: scoreColor, fontWeight: 'bold' }} />
+                <Statistic 
+                  title="Điểm Tín dụng" 
+                  value={data.credit_score} 
+                  valueStyle={{ color: scoreColor, fontWeight: 'bold', fontSize: 'clamp(20px, 5vw, 24px)' }}
+                  style={{ fontSize: 'clamp(12px, 3vw, 14px)' }}
+                />
             </Col>
             <Col xs={24} sm={12}>
-                <Statistic title="Ngưỡng rủi ro hệ thống" value="15%" />
+                <Statistic 
+                  title="Ngưỡng rủi ro hệ thống" 
+                  value="15%"
+                  valueStyle={{ fontSize: 'clamp(20px, 5vw, 24px)' }}
+                  style={{ fontSize: 'clamp(12px, 3vw, 14px)' }}
+                />
             </Col>
         </Row>
       </div>
