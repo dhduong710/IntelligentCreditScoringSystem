@@ -2,7 +2,9 @@ fastapi
 uvicorn
 pandas
 numpy
+scikit-learn==1.7.1
 joblib
+shap
 lightgbm
-scikit-learn
 pydantic
+python-multipart

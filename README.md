@@ -2,12 +2,6 @@
 
 <div align="center">
 
-![Credit Scoring](https://img.shields.io/badge/AI-Credit%20Scoring-red?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
-![React](https://img.shields.io/badge/React-19.2-61dafb?style=for-the-badge&logo=react)
-![FastAPI](https://img.shields.io/badge/FastAPI-Latest-009688?style=for-the-badge&logo=fastapi)
-![LightGBM](https://img.shields.io/badge/LightGBM-ML-yellow?style=for-the-badge)
-
 **Hệ thống chấm điểm tín dụng thông minh sử dụng Machine Learning & Explainable AI**
 
 </div>
@@ -223,7 +217,14 @@ cd ../frontend
 npm install
 ```
 
-### 4. Download/Prepare Data
+### 4. Build Frontend (Tạo thư mục dist)
+
+```bash
+cd ../frontend
+npm run build
+```
+
+### 5. Download/Prepare Data
 
 ```bash
 # Download dataset từ Kaggle
@@ -233,7 +234,7 @@ npm install
 # Credit-Scoring-System/data/application_train.csv
 ```
 
-### 5. Train Model (Optional)
+### 6. Train Model (Optional)
 
 Nếu bạn muốn train lại model:
 
@@ -247,6 +248,42 @@ python train_v3.py
 - `model_metadata_v3.pkl` (Metadata)
 
 > **Lưu ý**: Model đã được train sẵn trong repo. Bước này chỉ cần nếu bạn muốn retrain với data mới.
+
+---
+
+## Deploy trên Hugging Face Spaces
+
+### Thành phần sử dụng
+
+- **Backend**: [Credit-Scoring-System/backend/main.py](Credit-Scoring-System/backend/main.py)
+- **Dependencies**: [Credit-Scoring-System/backend/requirements.txt](Credit-Scoring-System/backend/requirements.txt)
+- **Frontend build**: [Credit-Scoring-System/frontend/dist](Credit-Scoring-System/frontend/dist)
+- **Model files**: [Credit-Scoring-System/model_core/lgbm_credit_model_v3.pkl](Credit-Scoring-System/model_core/lgbm_credit_model_v3.pkl) và [Credit-Scoring-System/model_core/model_metadata_v3.pkl](Credit-Scoring-System/model_core/model_metadata_v3.pkl)
+- **Dockerfile**: [Credit-Scoring-System/Dockerfile](Credit-Scoring-System/Dockerfile)
+
+### Hướng dẫn build và deploy
+
+```bash
+# 1) Build frontend
+cd frontend
+npm run build
+
+# 2) Quay lại root project
+cd ..
+
+# 3) Đảm bảo các file sau tồn tại trước khi deploy
+# backend/main.py
+# backend/requirements.txt
+# frontend/dist/
+# model_core/lgbm_credit_model_v3.pkl
+# model_core/model_metadata_v3.pkl
+# Dockerfile
+```
+
+### Ghi chú
+
+- Hugging Face Spaces sẽ sử dụng `Dockerfile` để chạy ứng dụng.
+- Thư mục `frontend/dist` là bản build tĩnh được phục vụ bởi backend.
 
 ---
 

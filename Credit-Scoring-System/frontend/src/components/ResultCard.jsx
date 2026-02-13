@@ -32,7 +32,7 @@ const ResultCard = ({ data }) => {
   };
 
   return (
-    <div style={{ padding: '0 20px', textAlign: 'center' }}>
+    <div style={{ padding: '0 clamp(8px, 2vw, 20px)', textAlign: 'center' }}>
       <Tag color={isApproved ? "success" : "error"} style={{ padding: '5px 15px', fontSize: 14, marginBottom: 20 }}>
          {isApproved ? "HỒ SƠ AN TOÀN" : "HỒ SƠ RỦI RO CAO"}
       </Tag>
@@ -44,7 +44,7 @@ const ResultCard = ({ data }) => {
       <Text style={{ fontSize: 16 }}>{data.message}</Text>
 
       <Row justify="center" align="middle" style={{ marginTop: 30, marginBottom: 20 }}>
-         <Col span={24} style={{ height: 200 }}>
+         <Col span={24} style={{ height: 'clamp(150px, 30vw, 200px)' }}>
              <Gauge {...config} />
              <Text type="secondary" strong></Text>
          </Col>
@@ -71,12 +71,12 @@ const ResultCard = ({ data }) => {
         />
       </div>
 
-      <div style={{ background: '#f9f9f9', padding: 20, borderRadius: 8, marginTop: 20 }}>
+      <div style={{ background: '#f9f9f9', padding: 'clamp(12px, 3vw, 20px)', borderRadius: 8, marginTop: 20 }}>
         <Row gutter={16}>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
                 <Statistic title="Điểm Tín dụng" value={data.credit_score} valueStyle={{ color: scoreColor, fontWeight: 'bold' }} />
             </Col>
-            <Col span={12}>
+            <Col xs={24} sm={12}>
                 <Statistic title="Ngưỡng rủi ro hệ thống" value="15%" />
             </Col>
         </Row>

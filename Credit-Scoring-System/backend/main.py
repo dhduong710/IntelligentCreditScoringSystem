@@ -5,6 +5,8 @@ import numpy as np
 import joblib
 import shap
 import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="HUST Bank Intelligent System", version="Final + SHAP")
@@ -200,3 +202,23 @@ def predict_credit_score(data: CreditApplication):
             "status": "REJECT", "probability": 0.5, "credit_score": 500, 
             "message": "Lỗi hệ thống khi phân tích.", "reasons": ["Không thể xác định lý do"]
         }
+    
+# CẤU HÌNH SERVE FRONTEND (REACT)
+# Lấy đường dẫn tuyệt đối đến thư mục chứa file tĩnh (React Build)
+# Trong Docker, ta sẽ copy 'frontend/dist' vào thư mục '/code/static'
+STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../static")
+
+# Kiểm tra nếu thư mục tồn tại (để tránh lỗi khi chạy local development)
+if os.path.exists(STATIC_DIR):
+    # Mount thư mục assets (css, js)
+    app.mount("/assets", StaticFiles(directory=os.path.join(STATIC_DIR, "assets")), name="assets")
+
+    # Route mặc định trả về index.html
+    @app.get("/{full_path:path}")
+    async def serve_react_app(full_path: str):
+        # Nếu gọi API thì không trả về HTML (đã xử lý ở trên)
+        if full_path.startswith("predict") or full_path.startswith("docs"):
+            return 
+        
+        # Trả về file index.html cho mọi route khác (để React Router xử lý)
+        return FileResponse(os.path.join(STATIC_DIR, "index.html"))

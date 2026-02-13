@@ -1,0 +1,157 @@
+/* Mobile First - Base styles */
+* {
+  box-sizing: border-box;
+}
+
+/* Typography responsive */
+h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+}
+
+/* Ant Design overrides for mobile */
+@media (max-width: 576px) {
+  /* Form adjustments */
+  .ant-form-item {
+    margin-bottom: 16px !important;
+  }
+  
+  .ant-form-item-label > label {
+    font-size: 13px !important;
+  }
+  
+  .ant-input-number,
+  .ant-select {
+    font-size: 14px !important;
+  }
+  
+  /* Button adjustments */
+  .ant-btn-lg {
+    height: 44px !important;
+    font-size: 16px !important;
+  }
+  
+  /* Card padding */
+  .ant-card-body {
+    padding: 12px !important;
+  }
+  
+  /* Title sizes */
+  .ant-typography h3 {
+    font-size: 18px !important;
+  }
+  
+  .ant-typography h5 {
+    font-size: 14px !important;
+  }
+  
+  /* Alert spacing */
+  .ant-alert {
+    margin-bottom: 12px !important;
+    padding: 8px 12px !important;
+  }
+  
+  /* Statistic responsive */
+  .ant-statistic-title {
+    font-size: 12px !important;
+  }
+  
+  .ant-statistic-content {
+    font-size: 18px !important;
+  }
+  
+  /* Tag sizing */
+  .ant-tag {
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+  
+  /* Result Card */
+  .ant-result-title {
+    font-size: 18px !important;
+  }
+  
+  /* Empty state */
+  .ant-empty-description {
+    font-size: 13px !important;
+  }
+  
+  /* Divider spacing */
+  .ant-divider {
+    margin: 12px 0 !important;
+  }
+}
+
+/* Tablet - 576px to 768px */
+@media (min-width: 576px) and (max-width: 768px) {
+  .ant-form-item-label > label {
+    font-size: 14px !important;
+  }
+  
+  .ant-btn-lg {
+    height: 46px !important;
+    font-size: 17px !important;
+  }
+}
+
+/* Desktop - Above 992px */
+@media (min-width: 992px) {
+  /* Ensure proper spacing on large screens */
+  .ant-row {
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .ant-layout-header {
+    height: 56px !important;
+    padding: 0 16px !important;
+  }
+  
+  .ant-layout-content {
+    padding: 16px !important;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .ant-btn,
+  .ant-input-number,
+  .ant-select-selector {
+    min-height: 44px !important;
+  }
+  
+  .ant-select-dropdown .ant-select-item {
+    padding: 8px 12px !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .ant-layout-header,
+  .ant-layout-footer {
+    display: none !important;
+  }
+  
+  .ant-btn {
+    display: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ant-card,
+  .ant-btn {
+    border-width: 2px !important;
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
