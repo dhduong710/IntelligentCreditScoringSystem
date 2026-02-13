@@ -3,7 +3,7 @@
 <div align="center">
 
 **Hệ thống chấm điểm tín dụng thông minh sử dụng Machine Learning & Explainable AI**
-**Link: https://inosuke710-hust-bank-credit-scoring.hf.space/**
+- **Link: https://inosuke710-hust-bank-credit-scoring.hf.space/**
 
 </div>
 
