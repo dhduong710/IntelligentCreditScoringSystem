@@ -32,11 +32,11 @@ const CreditForm = ({ onSubmit, isLoading }) => {
 
   return (
     <Card 
-      style={{ minHeight: '100%', display: 'flex', flexDirection: 'column', borderRadius: 12, border: 'none', boxShadow: 'none' }}
-      bodyStyle={{ flex: 1, padding: '0 clamp(8px, 2vw, 10px)' }}
+      style={{ height: '100%', display: 'flex', flexDirection: 'column', borderRadius: 12, border: 'none', boxShadow: 'none' }}
+      bodyStyle={{ flex: 1, padding: '0 clamp(10px, 2vw, 20px)' }}
     >
-      <div style={{ marginBottom: 24 }}>
-        <Title level={3} style={{ margin: 0, color: '#1f1f1f' }}>Hồ sơ vay vốn</Title>
+      <div style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
+        <Title level={3} style={{ margin: 0, color: '#1f1f1f', fontSize: 'clamp(18px, 4vw, 24px)' }}>Hồ sơ vay vốn</Title>
       </div>
 
       <Form
@@ -44,11 +44,11 @@ const CreditForm = ({ onSubmit, isLoading }) => {
         layout="vertical"
         onFinish={onFinish}
         onValuesChange={calculateTerm} 
-        size="large"
+        size={window.innerWidth < 768 ? "middle" : "large"}
         initialValues={{
           AMT_INCOME_TOTAL: 120000000, 
           AMT_CREDIT: 360000000,
-          AMT_ANNUITY: 3600000,
+          AMT_ANNUITY: 3000000,
           age: 36,
           years_employed: 1,
           NAME_HOUSING_TYPE: "Rented apartment",
@@ -56,7 +56,7 @@ const CreditForm = ({ onSubmit, isLoading }) => {
           EXT_SOURCE_2: 0.1
         }}
       >
-        <Title level={5} style={{ color: '#B01E23' }}><DollarOutlined /> Tài chính</Title>
+        <Title level={5} style={{ color: '#B01E23', fontSize: 'clamp(14px, 3.5vw, 16px)' }}><DollarOutlined /> Tài chính</Title>
         
         {/* CẢNH BÁO NẾU THỜI GIAN VAY QUÁ VÔ LÝ */}
         {loanTerm && loanTerm > 30 && (
@@ -103,9 +103,9 @@ const CreditForm = ({ onSubmit, isLoading }) => {
           </Col>
         </Row>
 
-        <Divider style={{ margin: '12px 0' }} />
+        <Divider style={{ margin: 'clamp(8px, 2vw, 12px) 0' }} />
 
-        <Title level={5} style={{ color: '#B01E23' }}><SolutionOutlined /> Nhân khẩu & Hành vi</Title>
+        <Title level={5} style={{ color: '#B01E23', fontSize: 'clamp(14px, 3.5vw, 16px)' }}><SolutionOutlined /> Nhân khẩu & Hành vi</Title>
         <Row gutter={[16, 8]}>
           <Col xs={24} sm={12}>
             <Form.Item label="Tuổi" name="age" rules={[{ required: true }]}>
@@ -138,7 +138,7 @@ const CreditForm = ({ onSubmit, isLoading }) => {
             </Form.Item>
           </Col>
           
-          <Col span={24}>
+          <Col xs={24} sm={24}>
              <Form.Item 
                 label={<span style={{color: '#B01E23', fontWeight: 'bold'}}>Lịch sử Tín dụng</span>} 
                 name="EXT_SOURCE_2"
@@ -154,10 +154,16 @@ const CreditForm = ({ onSubmit, isLoading }) => {
           </Col>
         </Row>
 
-        <Form.Item style={{ marginTop: 20 }}>
+        <Form.Item style={{ marginTop: 'clamp(16px, 4vw, 20px)' }}>
           <Button 
             type="primary" htmlType="submit" size="large" block loading={isLoading}
-            style={{ height: 50, fontSize: 18, fontWeight: 700, background: '#B01E23', borderColor: '#B01E23' }}
+            style={{ 
+              height: 'clamp(44px, 10vw, 50px)', 
+              fontSize: 'clamp(15px, 4vw, 18px)', 
+              fontWeight: 700, 
+              background: '#B01E23', 
+              borderColor: '#B01E23' 
+            }}
           >
             PHÂN TÍCH HỒ SƠ
           </Button>
